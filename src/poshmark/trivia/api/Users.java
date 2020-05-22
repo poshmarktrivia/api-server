@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Path("/user")
 public class Users {
@@ -54,6 +55,7 @@ public class Users {
 	public String getUserDetails(@PathParam("username") String userName) {
 		
 		Connection connect;
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 		try {
 			connect = MySQL.createConnection();
 			boolean role = false;
@@ -72,7 +74,7 @@ public class Users {
 			
 			String resut = UserProfile.getUserDetails(name, score, role);
 			
-			return new Gson().toJson(resut);
+			return gson.toJson(resut);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
