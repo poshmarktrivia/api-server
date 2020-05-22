@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -13,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,16 +29,40 @@ public class Users {
 	//Create User
 	@POST
 	@Path("/newuser")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String createUser(UserProfile userProfile) throws Exception {
-		Connection connect=MySQL.createConnection();
-		String name = userProfile.getName();
-	    boolean role = userProfile.getRole();
-	    String query="insert into users(name,isadmin) values ("+name+","+role+")";
-	    MySQL.updateOrDeleteDate(connect,query);
-	    String response = "{ 'code': '200' , 'message':'User created successfully'}";
-		return new Gson().toJson(response);
+	public String createUser(@FormParam("input_string") String inputString){
+		
+		
+		Connection connect;
+		JSONObject obj = new JSONObject();
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+		
+		String name = null;
+	    boolean isAdmin = false;
+
+		try {
+			connect = MySQL.createConnection();
+			JSONParser parser = new JSONParser(); 
+			JSONObject json = (JSONObject) parser. parse(inputString);
+			name= (String) json.get("name");
+			isAdmin=(boolean) json.get("is_admin");	
+			String query="insert into users(name,isadmin) values ('"+name+"',"+isAdmin+");";
+			MySQL.updateOrDeleteDate(connect,query);
+
+			obj.put("code",200);
+			obj.put("message","User created successfully");
+
+			MySQL.closeConnection(connect);
+			return gson.toJson(obj);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+
 	}
 	
 	

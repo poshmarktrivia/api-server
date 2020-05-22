@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class UserProfile {
     private String name;
     private Integer score;
-    private boolean role;
+    private boolean isadmin;
     /**
      * @return the firstName
      */
@@ -18,13 +18,13 @@ public class UserProfile {
         this.name = name;
     }
     public boolean getRole() {
-        return role;
+        return isadmin;
     }
     /**
      * @param firstName the firstName to set
      */
     public void setRole(boolean role) {
-        this.role = role;
+        this.isadmin = role;
     }
     public Integer getScore() {
         return score;

@@ -17,8 +17,7 @@ public class MySQLConnection{
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}finally {
 			
         }
@@ -30,8 +29,7 @@ public class MySQLConnection{
 			statement = connect.createStatement();
 			resultSet = statement.executeQuery(query);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}finally {
         }
     	return resultSet;
@@ -40,20 +38,19 @@ public class MySQLConnection{
     public void updateOrDeleteDate(Connection connect,String query) throws Exception {
     	try {
 			preparedStatement = connect.prepareStatement(query);
+			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}finally {
 
         }
     }
 	
-    public void closeConnection(Connection connect) {
+    public void closeConnection(Connection connect)throws Exception {
     	try {
 			connect.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
     }
 	 
