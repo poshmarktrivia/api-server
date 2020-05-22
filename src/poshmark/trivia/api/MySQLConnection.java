@@ -44,9 +44,17 @@ public class MySQLConnection{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
-			connect.close();
+
         }
     }
 	
+    public void closeConnection(Connection connect) {
+    	try {
+			connect.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 	 
 }

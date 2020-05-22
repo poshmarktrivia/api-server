@@ -12,6 +12,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.json.simple.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -55,7 +57,9 @@ public class Users {
 	public String getUserDetails(@PathParam("username") String userName) {
 		
 		Connection connect;
+		JSONObject obj = new JSONObject();
 		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+
 		try {
 			connect = MySQL.createConnection();
 			boolean role = false;
@@ -72,14 +76,18 @@ public class Users {
 	            role =rs.getBoolean(3);
 	        }
 			
-			String resut = UserProfile.getUserDetails(name, score, role);
+			obj.put("name",name);
+			obj.put("score",score);
+			obj.put("role",role);
 			
-			return gson.toJson(resut);
+			MySQL.closeConnection(connect);
+			return gson.toJson(obj);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
+		
 		return null;
 	}
 	
