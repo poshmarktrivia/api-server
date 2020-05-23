@@ -13,16 +13,21 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Path("/user")
+@Path("/users")
 public class Users {
 	
 	MySQLConnection MySQL = new MySQLConnection();
+	
+	Connection connect;
+	JSONObject obj = new JSONObject();
+	Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 			
 
 	
@@ -33,20 +38,16 @@ public class Users {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String createUser(@FormParam("input_string") String inputString){
 		
-		
-		Connection connect;
-		JSONObject obj = new JSONObject();
-		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-		
 		String name = null;
 	    boolean isAdmin = false;
-
+	 
 		try {
 			connect = MySQL.createConnection();
 			JSONParser parser = new JSONParser(); 
 			JSONObject json = (JSONObject) parser. parse(inputString);
 			name= (String) json.get("name");
 			isAdmin=(boolean) json.get("is_admin");	
+			
 			String query="insert into users(name,isadmin) values ('"+name+"',"+isAdmin+");";
 			MySQL.updateOrDeleteDate(connect,query);
 
@@ -71,7 +72,42 @@ public class Users {
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllUserDetails() {
-		//DB Connection
+		
+		Connection connect;
+		JSONObject obj = new JSONObject();
+		JSONArray usersArray = new JSONArray();
+		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+
+		try {
+			connect = MySQL.createConnection();
+			boolean role = false;
+			String query="select * from users ORDER BY name;";
+			ResultSet rs=MySQL.getData(connect, query);
+			String name= null;
+			int score = 0;
+			
+			
+			while (rs.next()) {
+				JSONObject user = new JSONObject();
+				System.out.println("rs: " + rs.toString());
+	            name = rs.getString(1);
+	            score = rs.getInt(2);
+	            role =rs.getBoolean(3);
+	            user.put("name",name);
+				user.put("score",score);
+				user.put("role",role);
+				usersArray.add(user);
+	        }
+			
+			obj.put("user_details",usersArray);
+			MySQL.closeConnection(connect);
+			return gson.toJson(obj);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 	
@@ -96,7 +132,6 @@ public class Users {
 			
 			
 			while (rs.next()) {
-				System.out.println("rs: " + rs.toString());
 	            name = rs.getString(1);
 	            score = rs.getInt(2);
 	            role =rs.getBoolean(3);
@@ -104,7 +139,7 @@ public class Users {
 			
 			obj.put("name",name);
 			obj.put("score",score);
-			obj.put("role",role);
+			obj.put("isadmin",role);
 			
 			MySQL.closeConnection(connect);
 			return gson.toJson(obj);
@@ -119,12 +154,26 @@ public class Users {
 	
 	//Delete user in the admin page
 	@DELETE
-	@Path("/users/{username}")
+	@Path("/{username}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteUser(@PathParam("username") String userName) {
-		//DB Connection
-		String response = "{ 'code': '200' , 'message':'User deleted successfully'}";
-		return new Gson().toJson(response);
+
+		
+		try {
+			connect = MySQL.createConnection();
+			String query="delete from users where name='"+userName+"';";
+			MySQL.updateOrDeleteDate(connect,query);
+			obj.put("code",200);
+			obj.put("message","User deleted successfully");
+
+			MySQL.closeConnection(connect);
+			return gson.toJson(obj);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	
 	}
 
 }

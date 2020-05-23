@@ -3,11 +3,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class QuestionsAns {
 	private String question;
-	private int type;
+	private int type_id;
 	private String[] options;
 	private String[] answers;
 	private int level;
 	private int score;
+	private int timer; 
 	public String getQuestions() {
         return question;
     }
@@ -15,10 +16,10 @@ public class QuestionsAns {
         this.question = question;
     }
     public int getType() {
-        return type;
+        return type_id;
     }
-    public void setType(int type) {
-        this.type = type;
+    public void setType(int type_id) {
+        this.type_id = type_id;
     }
     public String[] getOptions() {
         return options;
@@ -43,5 +44,11 @@ public class QuestionsAns {
     }
     public void setScore(int score) {
         this.score = score;
+    }
+    public int getTimer() {
+        return timer;
+    }
+    public void setTimer(int timer) {
+        this.timer = timer;
     }
 }
