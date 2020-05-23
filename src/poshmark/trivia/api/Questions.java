@@ -135,11 +135,11 @@ MySQLConnection MySQL = new MySQLConnection();
 			int score = 0;
 			int timer =0;
 			
+
 			
 			while (rs.next()) {
-				
 				JSONObject qa = new JSONObject();
-				
+				String[] optionsTemp =null;
 				System.out.println("rs: " + rs.toString());
 	            
 				question_id = rs.getInt(1);
@@ -154,8 +154,8 @@ MySQLConnection MySQL = new MySQLConnection();
 	            qa.put("question_id",question_id);
 	            qa.put("question",question);
 	            qa.put("type_id",type_id);
-	            qa.put("options",options);
-	            qa.put("answers",answers);
+	            qa.put("options",options.split(","));
+	            qa.put("answers",answers.split(","));
 	            qa.put("level",level);
 	            qa.put("score",score);
 	            qa.put("timer",timer);
@@ -217,8 +217,8 @@ MySQLConnection MySQL = new MySQLConnection();
 	            qa.put("question_id",question_id);
 	            qa.put("question",question);
 	            qa.put("type_id",type_id);
-	            qa.put("options",options);
-	            qa.put("answers",answers);
+	            qa.put("options",options.split(","));
+	            qa.put("answers",answers.split(","));
 	            qa.put("level",level);
 	            qa.put("score",score);
 	            qa.put("timer",timer);
